@@ -3,7 +3,7 @@
  *
  *  Created on: 3 mai 2016
  *      Author: Samuel Poiraud
- *  Cette fonction est rédigée en assembleur pour respecter scrupuleusement les délais de production des signaux pour les leds de la matrice.
+ *  Cette fonction est rï¿½digï¿½e en assembleur pour respecter scrupuleusement les dï¿½lais de production des signaux pour les leds de la matrice.
  */
 
  .syntax unified
@@ -13,23 +13,23 @@
 
   .data
 
-  	//Les durées des boucles sont obtenues et réglées par la mesure à l'oscilloscopes
-  	//Les durées ci dessous ont été obtenues pour une fréquence d'horloge SYSCLK à 64MHz, sur oscillateur interne.
+  	//Les durï¿½es des boucles sont obtenues et rï¿½glï¿½es par la mesure ï¿½ l'oscilloscopes
+  	//Les durï¿½es ci dessous ont ï¿½tï¿½ obtenues pour une frï¿½quence d'horloge SYSCLK ï¿½ 64MHz, sur oscillateur interne.
 	.set T0H, 18		//objectif : 350ns +/- 150ns
 	.set T0L, 40		//objectif : 800ns +/- 150ns
 	.set T1H, 40		//objectif : 700ns +/- 150ns
 	.set T1L, 30		//objectif : 600ns +/- 150ns
 
-  .section  .text.User_section
+  .section  .text.text
 
   .global WS2812_send_pixel_asm
   WS2812_send_pixel_asm:
   //R0 : pixel
   	STMDB SP! ,{R4-R7}
-  //R1 : GPIO_PIN_X	: c'est la valeur à inscrire dans le registre BSRR pour mettre à 1 le port demandé
-  //R2 : Adresse du registre BSRR du GPIO concerné
+  //R1 : GPIO_PIN_X	: c'est la valeur ï¿½ inscrire dans le registre BSRR pour mettre ï¿½ 1 le port demandï¿½
+  //R2 : Adresse du registre BSRR du GPIO concernï¿½
 
-	LSL R5, R1, #16	//R5 est la valeur à inscrire dans le registre BSRR pour mettre à 0 le port demandé
+	LSL R5, R1, #16	//R5 est la valeur ï¿½ inscrire dans le registre BSRR pour mettre ï¿½ 0 le port demandï¿½
 	MOV R3, #23
 	loop:
 

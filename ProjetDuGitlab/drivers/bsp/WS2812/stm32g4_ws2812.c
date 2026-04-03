@@ -1,15 +1,15 @@
 /**
  ******************************************************************************
  * @file 	stm32g4_ws2812.c
- * @author 	Samuel Poiraud 	&& Luc Hérault
+ * @author 	Samuel Poiraud 	&& Luc Hï¿½rault
  * @date 	May 3, 2016		&& 2024 --> portage sur G431
  * @brief 	Module pour controler le ws2812s
  ******************************************************************************
  *
  *@verbatim
- *	les envois de pixels sont sous-traités à la fonction assembleur WS2812S_send_pixel
+ *	les envois de pixels sont sous-traitï¿½s ï¿½ la fonction assembleur WS2812S_send_pixel
  *      	https://github.com/Daedaluz/stm32-ws2812/tree/master/src
- *  Sur la matrice de 64 WS2812, les leds sont chainées ligne après ligne.
+ *  Sur la matrice de 64 WS2812, les leds sont chainï¿½es ligne aprï¿½s ligne.
  *@endverbatim
  *
  */
@@ -24,7 +24,12 @@
 #include "stm32g4_utils.h"
 #include "stm32g4_gpio.h"
 #include "stm32g4_sys.h"
+extern void WS2812_send_pixel_asm(uint32_t pixel, uint32_t gpio_pin_x, uint32_t * gpiox_bsrr);
 
+#define WS2812_send_pixel(pixel) WS2812_send_pixel_asm(pixel, WS2812_PIN_DATA, (uint32_t *)&WS2812_PORT_DATA->BSRR)
+
+
+asm(".section .text");
 #if !(defined WS2812_PORT_DATA) || !defined(WS2812_PIN_DATA)
 	#define WS2812_PORT_DATA	GPIOB
 	#define WS2812_PIN_DATA		GPIO_PIN_4
@@ -46,12 +51,9 @@ void BSP_WS2812_init(void)
 }
 
 
-extern void WS2812_send_pixel_asm(uint32_t pixel, uint32_t gpio_pin_x, uint32_t * gpiox_bsrr);
-
-#define WS2812_send_pixel(pixel) WS2812_send_pixel_asm(pixel, WS2812_PIN_DATA, (uint32_t *)&WS2812_PORT_DATA->BSRR)
 
 /**
- * @brief fonction pour prendre en main le module. Les patriotes vont apprécier cette fonction ;)
+ * @brief fonction pour prendre en main le module. Les patriotes vont apprï¿½cier cette fonction ;)
  */
 void BSP_WS2812_demo(void)
 {
@@ -81,12 +83,12 @@ void BSP_WS2812_demo(void)
 
 /**
  * @brief	Cette fonction envoie 64 pixels vers la matrice de leds.
- * @note	les envois de pixels sont sous-traités à la fonction assembleur WS2812S_send_pixel
- * 			Cette fonction est rédigée en assembleur pour respecter scrupuleusement les délais de production des signaux pour les leds de la matrice.
- * 			Remarque : les interruptions sont désactivées temporairement pendant l'exécution de cette fonction pour éviter qu'elles provoquent des 'pauses' lors de la production des signaux.
- * 			La durée d'exécution de cette fonction est de l'ordre de 2,5ms. Durée pendant laquelle aucune interruption ne peut survenir !!!
+ * @note	les envois de pixels sont sous-traitï¿½s ï¿½ la fonction assembleur WS2812S_send_pixel
+ * 			Cette fonction est rï¿½digï¿½e en assembleur pour respecter scrupuleusement les dï¿½lais de production des signaux pour les leds de la matrice.
+ * 			Remarque : les interruptions sont dï¿½sactivï¿½es temporairement pendant l'exï¿½cution de cette fonction pour ï¿½viter qu'elles provoquent des 'pauses' lors de la production des signaux.
+ * 			La durï¿½e d'exï¿½cution de cette fonction est de l'ordre de 2,5ms. Durï¿½e pendant laquelle aucune interruption ne peut survenir !!!
  * @param 	pixels est un tableau de 64 cases absolument...
- * @note	attention, le tableau de pixels correspond aux leds dans l'ordre où elles sont câblées. Sur la matrice 8x8, elles sont reliées en serpentin ! (et non en recommancant à gauche à chaque nouvelle ligne)...
+ * @note	attention, le tableau de pixels correspond aux leds dans l'ordre oï¿½ elles sont cï¿½blï¿½es. Sur la matrice 8x8, elles sont reliï¿½es en serpentin ! (et non en recommancant ï¿½ gauche ï¿½ chaque nouvelle ligne)...
  */
 void BSP_WS2812_display(uint32_t * pixels, uint8_t size)
 {
@@ -123,7 +125,7 @@ void BSP_WS2812_reset(void){
 	//int i;
 	OUTPUT(0);
 	Delay_us(100);
-	//for(i = 0; i < RES; i++);	//Utilisez cette fonction et reglée RES si la fonction Delay_us n'est pas disponible.
+	//for(i = 0; i < RES; i++);	//Utilisez cette fonction et reglï¿½e RES si la fonction Delay_us n'est pas disponible.
 }
 
 

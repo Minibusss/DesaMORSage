@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  * @file 	stm32g4_ws2812s.h
- * @author 	Samuel Poiraud 	&& Luc Hérault
+ * @author 	Samuel Poiraud 	&& Luc Hï¿½rault
  * @date 	May 3, 2016		&& 2024 --> portage sur G431
  * @brief 	Module pour controler le ws2812s
  ******************************************************************************
