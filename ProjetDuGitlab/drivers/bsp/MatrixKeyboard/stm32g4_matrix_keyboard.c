@@ -86,10 +86,10 @@ void BSP_MATRIX_KEYBOARD_init(const char * new_keyboard_keys)
 	keyboard_pin_set_input((uint32_t)PORT_INPUT_3,PIN_INPUT_3);
 
 	MATRIX_KEYBOARD_write_bit_output(DEFAULT_STATE);
-	if(new_keyboard_keys)
-		keyboard_keys = (char *)new_keyboard_keys;
+	if(new_keyboard_keys)//Condition qui regarde si l'objet pointe vers quelque chose, si oui alors ça veut dire qu'il y a une matrice non connue à ajouter
+		keyboard_keys = (char *)new_keyboard_keys;//Va ajouter la nouvelle matrice passée en paramètre
 	else
-		keyboard_keys = (char *)default_keyboard_keys;
+		keyboard_keys = (char *)default_keyboard_keys;//Va ajouter la matrice par défaut
 	initialized = true;
 }
 

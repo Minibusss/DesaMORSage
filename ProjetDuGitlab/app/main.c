@@ -14,10 +14,13 @@
 #include "stm32g4_gpio.h"
 #include "stm32g4_uart.h"
 #include "stm32g4_utils.h"
-
+#include "stm32g4_matrix_keyboard.h"//Importation de la librarie pour gérer le clavier
+#include "stm32g4_morse.h"
 #include <stdio.h>
+#include <stdint.h>
 
 #define BLINK_DELAY		100	//ms
+
 
 void write_LED(bool b)
 {
@@ -63,27 +66,38 @@ int main(void)
 	BSP_GPIO_enable();
 	BSP_UART_init(UART2_ID,115200);
 
+	/* Initialisation du clavier matriciel */
+	const char clavierMatriciel[16]={'1','2','3','A',
+			'4','5','6','B',
+			'7','8','9','C',
+			'*','0','#','D'};
+	BSP_MATRIX_KEYBOARD_init(clavierMatriciel);
+
 	/* Indique que les printf sont dirigés vers l'UART2 */
 	BSP_SYS_set_std_usart(UART2_ID, UART2_ID, UART2_ID);
 
 	/* Initialisation du port de la led Verte (carte Nucleo) */
 	BSP_GPIO_pin_config(LED_GREEN_GPIO, LED_GREEN_PIN, GPIO_MODE_OUTPUT_PP,GPIO_NOPULL,GPIO_SPEED_FREQ_HIGH,GPIO_NO_AF);
-
+	/*
+			if( char_received(UART2_ID) )
+			{
+				write_LED(true);		 write_LED? Faites un ctrl+clic dessus pour voir...
+				HAL_Delay(BLINK_DELAY);	... ça fonctionne aussi avec les macros, les variables. C'est votre nouveau meilleur ami
+				write_LED(false);
+			}*/
 	/* Hello student */
-	printf("Hi <Student>, can you read me?\n");
-
-	//heartbeat();
+	//printf("Hi <Student>, can you read me?\n");
 
 	/* Tâche de fond, boucle infinie, Infinite loop,... quelque soit son nom vous n'en sortirez jamais */
+	uint8_t *chaineTraduite;
 	while (1)
 	{
-
-		if( char_received(UART2_ID) )
-		{
-			write_LED(true);		/* write_LED? Faites un ctrl+clic dessus pour voir... */
-			HAL_Delay(BLINK_DELAY);	/* ... ça fonctionne aussi avec les macros, les variables. C'est votre nouveau meilleur ami */
-			write_LED(false);
+		chaineTraduite = conversionChaineMorse("ABC3DE");
+		printf("Chaine {");
+		for (uint8_t i = 0; i<20; i++){
+			printf(" %d ",chaineTraduite[i]);
 		}
+		printf("}");
 
 	}
 }
