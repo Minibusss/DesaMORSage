@@ -45,7 +45,7 @@ app/main.o: ../app/main.c ../app/config.h \
  ../drivers/bsp/stm32g4_systick.h ../drivers/bsp/stm32g4_gpio.h \
  ../drivers/bsp/stm32g4_uart.h ../drivers/bsp/stm32g4_utils.h \
  C:/Users/Utilisateur/Documents/FISA/E3a/S6/ElecNum/DesaMORSage/DesaMORSage/ProjetDuGitlab/drivers/bsp/MatrixKeyboard/stm32g4_matrix_keyboard.h \
- ../app/stm32g4_morse.h
+ ../app/../Morse/stm32g4_morse.h
 ../app/config.h:
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal.h:
 ../core/Inc/stm32g4xx_hal_conf.h:
@@ -97,4 +97,4 @@ app/main.o: ../app/main.c ../app/config.h \
 ../drivers/bsp/stm32g4_uart.h:
 ../drivers/bsp/stm32g4_utils.h:
 C:/Users/Utilisateur/Documents/FISA/E3a/S6/ElecNum/DesaMORSage/DesaMORSage/ProjetDuGitlab/drivers/bsp/MatrixKeyboard/stm32g4_matrix_keyboard.h:
-../app/stm32g4_morse.h:
+../app/../Morse/stm32g4_morse.h:

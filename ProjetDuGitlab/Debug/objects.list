@@ -1,5 +1,5 @@
+"./Morse/stm32g4_morse.o"
 "./app/main.o"
-"./app/stm32g4_morse.o"
 "./core/Src/stm32g4xx_it.o"
 "./core/Src/syscalls.o"
 "./core/Src/sysmem.o"

@@ -3,16 +3,15 @@
  * @file 	stm32g4_morse.c
  * @author 	Alice GEDOUX
  * @date 	Avr 10, 2026
- * @brief	Fichier principal pour convertir une chaine en morse
+ * @brief	Fichier principal pour convertir une chaine de 5 caractères en morse
  *******************************************************************************
  */
+#ifdef TEST
+	#include "../Tests/test_morse.h"
+#else
+	#include "stm32g4_morse.h"
+#endif
 
-#include "stm32g4_morse.h"
-
-/*
-isalpha() fait partie de la bibliothèque <ctype.h>.
-Elle permet de tester si un caractère est une lettre (A–Z ou a–z).
- */
 #include <ctype.h>
 #include <string.h>
 #include <stdint.h>
@@ -64,25 +63,33 @@ lettresCode alphabet[TAILLE_TABLEAU_ALPHABET_MORSE] = {
     {'Y', {2,1,2,2}},    // -.--
     {'Z', {2,2,1,1}}     // --..
 };
-static uint8_t chaineValide[5]="";
+uint8_t chaineValide[5]="";
+uint8_t nombreElements = 0;
 
-/*
- * Fonctions privées
- */
 
-static uint8_t verifierChaineValide(int8_t * chaineAConvertir);
+#ifdef TEST
+    #define PRIVATE
+#else
+    #define PRIVATE static
+	/*
+	 * Fonction privée
+	 */
+	static uint8_t verifierChaineValide(int8_t * chaineAConvertir);
+#endif
+
 
 /**
   * @brief  La fonction permet de vérifier que la chaine est dans le bon format (que ce sont les caractères alphabétiques) et d'ajouter au maximum 5 caractères dans chaineAUtiliser.
   * @param  Chaine à convertir en morse.
   * @retval Renvoie un entier.
  */
-static uint8_t verifierChaineValide(int8_t * chaineAConvertir){
-	uint8_t nombreElements = 0;
+PRIVATE uint8_t verifierChaineValide(int8_t * chaineAConvertir){
 	uint8_t indice = 0;
+	nombreElements = 0;
 	int i = 0;
 	while(chaineAConvertir[i]!='\0')
 	{
+		/*warning: array subscript has type 'char' [-Wchar-subscripts] if(isalpha(chaineAConvertir[i]) && nombreElements < 5)*/
 		if(isalpha(chaineAConvertir[i]) && nombreElements < 5)
 		{
 			chaineValide[indice] = toupper(chaineAConvertir[i]); //Insère dans la chaineValide chaque caractère alphabetique valide
@@ -91,7 +98,7 @@ static uint8_t verifierChaineValide(int8_t * chaineAConvertir){
 		}
 		i++;
 	}
-	return (nombreElements == 0);
+	return (nombreElements > 0);//Renvoit 1 si c'est vrai et 0 sinon si c'est faux
 }
 
 /**
@@ -103,38 +110,43 @@ uint8_t* conversionChaineMorse(int8_t * chaineAConvertir){
 	uint8_t valide = verifierChaineValide(chaineAConvertir);//Permet de mettre la chaine dans le bon format et de bonne taille (max 5 caractères)
 	uint8_t indiceChaineConverti = 0;
 	static uint8_t chaineConverti[20];
-	if(valide == 1)
+	memset(chaineConverti, 0, sizeof(chaineConverti));
+	if(valide == 0)
 	{
 		return NULL;
 	}
-	else
+
+	//Boucle permettant de faire les 5 caractères
+	for(uint8_t i = 0; i < nombreElements; i++)
 	{
-		//Boucle permettant de faire les 5 caractères
-		for(uint8_t i = 0; i < 5; i++)
+		//Boulce permettant de parcourir la structure "alphabet"
+		for(uint8_t j = 0; j < TAILLE_TABLEAU_ALPHABET_MORSE; j++)
 		{
-			//Boulce permettant de parcourir la structure "alphabet"
-		    for(uint8_t j = 0; j < TAILLE_TABLEAU_ALPHABET_MORSE; j++)
-		    {
-		    	//Compare si le caractère chaineValide[i] vaut la lettre j de la structure alphabet
-		        if(chaineValide[i] == alphabet[j].lettre)
-		        {
-
-	                printf("%c",alphabet[j].lettre);
-		            //Parcour le code correspondant à la lettre, et l'ajoute à la chaineConverti
-		            for(uint8_t k = 0; k < 4; k++)
-		            {
-		                chaineConverti[indiceChaineConverti]=alphabet[j].code[k];
-		                indiceChaineConverti+=1;
-		                printf("indice %d",indiceChaineConverti);
-		                printf("code %d",alphabet[j].code[k]);
-		                printf("chaine %d",chaineConverti[indiceChaineConverti]);
-		            }
-		            break;
-		        }
-		    }
+			//Compare si le caractère chaineValide[i] vaut la lettre j de la structure alphabet
+			if(chaineValide[i] == alphabet[j].lettre)
+			{
+				//Parcour le code correspondant à la lettre, et l'ajoute à la chaineConverti
+				for(uint8_t k = 0; k < 4; k++)
+				{
+					chaineConverti[indiceChaineConverti]=alphabet[j].code[k];
+					indiceChaineConverti+=1;
+				}
+				break;
+			}
 		}
-
-
 	}
+
+	if(nombreElements != 5){
+		for (uint8_t l = 0; l<5-nombreElements;l++){
+			for (uint8_t m = 0; m<4 ;m++){
+				chaineConverti[indiceChaineConverti]=0;
+				indiceChaineConverti++;
+			}
+		}
+	}
+
+	// reset
+	nombreElements = 0;
+	memset(chaineValide, 0, 5);
 	return chaineConverti;
 }

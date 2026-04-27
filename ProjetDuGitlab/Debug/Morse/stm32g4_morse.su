@@ -1,0 +1,2 @@
+../Morse/stm32g4_morse.c:86:17:verifierChaineValide	8	static
+../Morse/stm32g4_morse.c:109:10:conversionChaineMorse	24	static

@@ -45,6 +45,7 @@ RM := rm -rf
 -include core/Startup/subdir.mk
 -include core/Src/subdir.mk
 -include app/subdir.mk
+-include Morse/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

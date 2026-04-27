@@ -15,17 +15,11 @@
 #include "stm32g4_uart.h"
 #include "stm32g4_utils.h"
 #include "stm32g4_matrix_keyboard.h"//Importation de la librarie pour gérer le clavier
-#include "stm32g4_morse.h"
 #include <stdio.h>
 #include <stdint.h>
+#include "../Morse/stm32g4_morse.h"
 
 #define BLINK_DELAY		100	//ms
-
-
-void write_LED(bool b)
-{
-	HAL_GPIO_WritePin(LED_GREEN_GPIO, LED_GREEN_PIN, b);
-}
 
 bool char_received(uart_id_t uart_id)
 {
@@ -38,18 +32,6 @@ bool char_received(uart_id_t uart_id)
 	else
 		return false;
 }
-
-void heartbeat(void)
-{
-	while(! char_received(UART2_ID) )
-	{
-		write_LED(true);
-		HAL_Delay(50);
-		write_LED(false);
-		HAL_Delay(1500);
-	}
-}
-
 
 /**
   * @brief  Point d'entrée de votre application
