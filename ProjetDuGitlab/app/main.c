@@ -1,9 +1,9 @@
 /**
  *******************************************************************************
- * @file 	main.c
- * @author 	jjo et nc
- * @date 	2026
- * @brief	Fichier principal de votre projet sur carte Nucléo STM32G431KB
+ * @file    main.c
+ * @author  Cirou Nicolas
+ * @date    2026
+ * @brief   Affichage Morse sur bandeau LED via HC-05
  *******************************************************************************
  */
 
@@ -14,29 +14,72 @@
 #include "stm32g4_uart.h"
 #include "stm32g4_utils.h"
 #include "WS2812/stm32g4_ws2812.h"
-#include <stdio.h>
-
-/**
-  * @brief  Point d'entrée de votre application
-  */
-uint8_t tableau[20] = {1,2,0,0,1,1,2,0,2,0,2,0,1,1,2,0,2,2,2,2};
-
-uint8_t *ptr = tableau;
+#include "HC-05/stm32g4_hc05.h"
+#include "Morse/stm32g4_morse.h"
+#include <string.h>
 
 int main(void)
 {
-    // Initialisation de la couche matérielle basse (microprocesseur)
     HAL_Init();
-
-    // Configuration de l'horloge à sa vitesse maximale
     SystemClock_Config();
 
-    // Initialisation de la broche PB4 pour le bandeau LED
+    // Configurer le HC-05 (1 seul fois)
+    // HC05_set_echo_for_AT_mode();
+
+    BSP_UART_init(UART1_ID, 115200);
     BSP_WS2812_init();
+
+    // Buffer de réception UART
+    int8_t  buffer[21]; // 21 car CR+LF à la fin (réglage dans appli bluetooth)
+    uint8_t index = 0;
+    uint8_t c;
+
+    // Pixels LED
+    uint32_t pixels[20] = {0};
+    BSP_WS2812_display(pixels, 20);
+
+    // Tableau morse courant
+    uint8_t tableau[20] = {0};
 
     while (1)
     {
-    	// Fonction d'affichage du morse
-    	BSP_WS2812_Display_Morse(ptr);
+        // ---------------------------------------------------------
+        // Réception Bluetooth (HC-05 via UART1)
+        // --------------------------------------------------------
+        if (BSP_UART_data_ready(UART1_ID))
+        {
+            c = BSP_UART_getc(UART1_ID);
+
+            if (c == '\n' || c == '\r')  // fin de trame
+            {
+                if (index > 0)  // on a bien reçu quelque chose
+                {
+                    buffer[index] = '\0';  // terminer la chaîne
+                    index = 0;             // reset pour le prochain mot
+
+                    // Conversion de la chaîne complète en morse
+                    uint8_t* result = conversionChaineMorse(buffer);
+                    if (result != NULL)
+                        memcpy(tableau, result, 20);
+                }
+            }
+            else if (index < 20)  // stocker le caractère
+            {
+                buffer[index++] = c;
+            }
+        }
+
+        // --------------------------------------------------------
+        // Affichage LED
+        // --------------------------------------------------------
+        for (uint8_t i = 0; i < 20; i++)
+        {
+            if      (tableau[i] == 0) pixels[i] = WS2812_COLOR_BLACK;
+            else if (tableau[i] == 1) pixels[i] = WS2812_COLOR_RED;
+            else if (tableau[i] == 2) pixels[i] = WS2812_COLOR_GREEN;
+        }
+        BSP_WS2812_display(pixels, 20);
+
+        HAL_Delay(100);
     }
 }
