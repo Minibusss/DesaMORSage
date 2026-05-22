@@ -26,7 +26,7 @@ int main(void)
     // Configurer le HC-05 (1 seul fois)
     // HC05_set_echo_for_AT_mode();
 
-    BSP_UART_init(UART1_ID, 115200);
+    BSP_UART_init(UART1_ID, 38400);
     BSP_WS2812_init();
 
     // Buffer de réception UART
@@ -36,37 +36,33 @@ int main(void)
 
     // Pixels LED
     uint32_t pixels[20] = {0};
-    BSP_WS2812_display(pixels, 20);
+    //BSP_WS2812_display(pixels, 20);
 
     // Tableau morse courant
-    uint8_t tableau[20] = {0};
+    uint8_t tableau[20] = {1,1,1,1,1,1,1,1,1};
 
     while (1)
     {
         // ---------------------------------------------------------
         // Réception Bluetooth (HC-05 via UART1)
         // --------------------------------------------------------
-        if (BSP_UART_data_ready(UART1_ID))
-        {
-            c = BSP_UART_getc(UART1_ID);
+    	if (BSP_UART_data_ready(UART1_ID))
+    	{
+    	    c = BSP_UART_getc(UART1_ID);
 
-            if (c == '\n' || c == '\r')  // fin de trame
-            {
-                if (index > 0)  // on a bien reçu quelque chose
-                {
-                    buffer[index] = '\0';  // terminer la chaîne
-                    index = 0;             // reset pour le prochain mot
+    	    if (c == '\n' || c == '\r')  // fin de trame
+    	    {
+    	        buffer[index] = '\0';
+    	        index = 0;
 
-                    // Conversion de la chaîne complète en morse
-                    uint8_t* result = conversionChaineMorse(buffer);
-                    if (result != NULL)
-                        memcpy(tableau, result, 20);
-                }
-            }
-            else if (index < 20)  // stocker le caractère
-            {
-                buffer[index++] = c;
-            }
+    	        uint8_t* result = conversionChaineMorse(buffer);
+    	        if (result != NULL)
+    	            memcpy(tableau, result, 20);
+    	    }
+    	    else if (index < 20)  // stocker le caractère
+    	    {
+    	        buffer[index++] = c;
+    	    }
         }
 
         // --------------------------------------------------------
