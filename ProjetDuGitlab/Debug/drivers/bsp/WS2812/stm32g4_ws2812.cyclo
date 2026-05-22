@@ -1,0 +1,6 @@
+../drivers/bsp/WS2812/stm32g4_ws2812.c:43:6:BSP_WS2812_init	1
+../drivers/bsp/WS2812/stm32g4_ws2812.c:121:6:BSP_WS2812_reset	1
+../drivers/bsp/WS2812/stm32g4_ws2812.c:91:6:BSP_WS2812_display	2
+../drivers/bsp/WS2812/stm32g4_ws2812.c:56:6:BSP_WS2812_demo	4
+../drivers/bsp/WS2812/stm32g4_ws2812.c:101:6:BSP_WS2812_display_only_one_pixel	3
+../drivers/bsp/WS2812/stm32g4_ws2812.c:111:6:BSP_WS2812_display_full	2

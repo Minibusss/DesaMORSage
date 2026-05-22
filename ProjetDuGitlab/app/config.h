@@ -50,7 +50,7 @@
 #endif
 
 #define USE_EPAPER			0 // e-paper (�cran basse consommation)
-#define USE_WS2812			0 // Matrice de led
+#define USE_WS2812			1 // Matrice de led
 
 /*------------------Capteurs------------------*/
 #define USE_MPU6050			0 // Acc�l�rom�tre, Gyroscope

@@ -40,7 +40,10 @@ drivers/bsp/WS2812/stm32g4_ws2812.o: \
  ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_tim.h \
  ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_tim_ex.h \
  ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart.h \
- ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart_ex.h
+ ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart_ex.h \
+ ../drivers/bsp/WS2812/stm32g4_ws2812.h ../drivers/bsp/stm32g4_utils.h \
+ ../drivers/bsp/stm32g4_gpio.h ../drivers/bsp/stm32g4_sys.h \
+ ../drivers/bsp/stm32g4_uart.h ../drivers/bsp/stm32g4_utils.h
 ../app/config.h:
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal.h:
 ../core/Inc/stm32g4xx_hal_conf.h:
@@ -83,3 +86,9 @@ drivers/bsp/WS2812/stm32g4_ws2812.o: \
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_tim_ex.h:
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart.h:
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart_ex.h:
+../drivers/bsp/WS2812/stm32g4_ws2812.h:
+../drivers/bsp/stm32g4_utils.h:
+../drivers/bsp/stm32g4_gpio.h:
+../drivers/bsp/stm32g4_sys.h:
+../drivers/bsp/stm32g4_uart.h:
+../drivers/bsp/stm32g4_utils.h:

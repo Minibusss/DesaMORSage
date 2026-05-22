@@ -20,6 +20,8 @@
 #include "stm32g4_matrix_keyboard.h"//Importation de la librairie pour gérer le clavier matriciel
 #include "../drivers/bsp/tft_ili9341/stm32g4_ili9341.h"
 #include "../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h"
+#include "../drivers/bsp/WS2812/stm32g4_ws2812.h"
+#include "../drivers/bsp/HC-05/stm32g4_hc05.h"
 
 /* Importation des libraries créées pour le projet*/
 #include "../Morse/stm32g4_morse.h"
@@ -35,11 +37,9 @@
 /* STRUCTURE LOCALE AU FICHIER */
 typedef enum{
 	ETAT_INIT,
-	ETAT_SCAN_RFID,
 	ETAT_LECTURE_MDP,
-	ETAT_CONNECTION_B,
 	ETAT_ENVOI_CHAINE,
-	ETAT_MENU,
+	ETAT_AFFICHAGE_MORSE,
 }ETAT;
 
 /**
@@ -56,6 +56,10 @@ int main(void)
 	/* Initialisation des périphériques utilisés dans le programme */
 	BSP_GPIO_enable();
 	BSP_UART_init(UART2_ID,115200);
+	BSP_UART_init(UART1_ID, 38400);
+
+	//Initialisation des LED
+	BSP_WS2812_init();
 
 	//Initialisation du GPIO expander
 	BSP_MCP23S17_init();
@@ -94,8 +98,25 @@ int main(void)
 	//ETAT_CONNECTION_B
 
 	//ETAT_ENVOI_CHAINE
-	//uint8_t chaineTraduite[TAILLE_CHAINE_TRADUITE]="\0";
-	//uint8_t *pointeurChaineTraduite = chaineTraduite;
+
+
+	// Buffer de réception UART
+	int8_t  buffer[21]; // 21 car CR+LF à la fin (réglage dans appli bluetooth)
+    uint8_t index = 0;
+    uint8_t c;
+
+    // Tableau morse courant
+   	uint8_t tableau[20] = {1,1,1,1,1,1,1,1,1};
+
+    // Pixels LED
+    uint32_t pixels[20] = {0};
+    for (uint8_t i = 0; i < 20; i++)
+    {
+    	if (tableau[i] == 0) pixels[i] = WS2812_COLOR_BLACK;
+    }
+    BSP_WS2812_display(pixels, 20);
+
+
 
 	while (1)
 	{
@@ -103,12 +124,12 @@ int main(void)
 	    {
 	        case ETAT_INIT:
 	            //PAGE_changerPage(PAGE_ACCUEIL, NULL, 3);
-	            //EetatProcessus = ETAT_MENU;
+	            //etatProcessus = ETAT_MENU;
 	            break;
 
-	        case ETAT_MENU:
+
 	        	/*
-	            // On attend que l'utilisateur appuie sur "Scanner Badge"
+	            // On attend que l'utilisateur appuie sur "Renseigner un mdp
 	            // Le tactile est géré ici directement
 	            {
 	                int16_t x, y;
@@ -118,145 +139,58 @@ int main(void)
 	                    if (x > 40 && x < 200 && y > 200 && y < 240)
 	                    {
 	                        PAGE_changerPage(PAGE_SCAN_RFID, NULL, tentativesRestantes);
-	                        etatProcessus = ETAT_SCAN_RFID;
+	                        etatProcessus = ETAT_LECTURE_MDP;
 	                    }
 	                }
 	            }*/
-	            break;
 
-	        case ETAT_SCAN_RFID:
-	        	/*
-	            // Lecture du badge RFID
-	            // TODO : appel à ta fonction de lecture RFID
-	            // Exemple : if (RFID_lireBadge(nomUtilisateur)) { ... }
-	            {
-	                // Simulé pour l'exemple, remplace par ta vraie lecture RFID
-	                bool badgeLu = false; // <- remplacer par RFID_lireBadge(nomUtilisateur)
-
-	                if (badgeLu)
-	                {
-	                    tentativesRestantes = 3;
-	                    memset(motDePasse, 0, TAILLE_MDP);
-	                    indiceMotDePasse = 0;
-	                    PAGE_changerPage(PAGE_MDP, nomUtilisateur, tentativesRestantes);
-	                    etatProcessus = ETAT_LECTURE_MDP;
-	                }
-	            }*/
-	            break;
 
 	        case ETAT_LECTURE_MDP:
 	            // Lecture du clavier matriciel
+	        	//Ici ne change pas d'état tant que le mdp n'est pas bon
 	            BSP_MATRIX_KEYBOARD_process_main(pointeurSaisie, indiceSaisie);
-	            if(indiceSaisie == 5){
-	            	etatProcessus = ETAT_CONNECTION_B;
-	            }
-
-	            // Vérification bouton "Valider" sur l'écran tactile
-	            /*
-	            {
-	                int16_t x, y;
-	                if (XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
-	                {
-	                    // Bouton "Valider" : (60,200) -> (180,240)
-	                    if (x > 60 && x < 180 && y > 200 && y < 240)
-	                    {
-	                        // TODO : remplacer par ta vraie vérification MDP
-	                        bool mdpCorrect = false; // <- verifierMDP(motDePasse)
-
-	                        if (mdpCorrect)
-	                        {
-	                            PAGE_changerPage(PAGE_ENVOI_B, nomUtilisateur, tentativesRestantes);
-	                            etatProcessus = ETAT_CONNECTION_B;
-	                        }
-	                        else
-	                        {
-	                            tentativesRestantes--;
-
-	                            if (tentativesRestantes == 0)
-	                            {
-	                                // Blocage -> retour accueil
-	                                tentativesRestantes = 3;
-	                                PAGE_changerPage(PAGE_ACCUEIL, NULL, 3);
-	                                etatProcessus = ETAT_MENU;
-	                            }
-	                            else
-	                            {
-	                                // Réaffiche la page MDP avec les tentatives restantes
-	                                memset(motDePasse, 0, TAILLE_MDP);
-	                                indiceMotDePasse = 0;
-	                                PAGE_changerPage(PAGE_MDP, nomUtilisateur, tentativesRestantes);
-	                                // On reste dans ETAT_LECTURE_MDP
-	                            }
-	                        }
-	                    }
-	                }
-	            }*/
-	            break;
-
-	        case ETAT_CONNECTION_B:
-	        	/*
-	            // On attend la réception d'une chaine via Bluetooth
-	            {
-	                // TODO : remplacer par ta vraie fonction de réception BT
-	                // Exemple : if (BT_chaineRecue(chaineBluetooth)) { ... }
-	                bool chaineRecue = false; // <- BT_chaineRecue(chaineBluetooth)
-
-	                if (chaineRecue)
-	                {
-	                    // Conversion en morse
-	                    chaineTraduite = conversionChaineMorse(chaineBluetooth);
-
-	                    if (chaineTraduite != NULL)
-	                    {
-	                        PAGE_changerPage(PAGE_AFFICHAGE_CHAINE, nomUtilisateur, tentativesRestantes);
-	                        etatProcessus = ETAT_ENVOI_CHAINE;
-	                    }
-	                }
-
-	                // Bouton "Quitter session"
-	                int16_t x, y;
-	                if (XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
-	                {
-	                    if (x > 40 && x < 200 && y > 260 && y < 300)
-	                    {
-	                        // Libération mémoire si chaine allouée dynamiquement
-	                        if (chaineTraduite != NULL)
-	                        {
-	                            free(chaineTraduite);
-	                            chaineTraduite = NULL;
-	                        }
-	                        PAGE_changerPage(PAGE_ACCUEIL, NULL, 3);
-	                        etatProcessus = ETAT_MENU;
-	                    }
-	                }
+	            if(indiceMotDePasse == 5){ //EGAL AU MDP
+	            	etatProcessus = ETAT_ENVOI_CHAINE;
 	            }
 	            break;
 
 	        case ETAT_ENVOI_CHAINE:
-	            // Affichage de la chaine traduite
-	            {
-	                PAGE_afficherChaineTraduite(chaineTraduite);  // à créer dans tes pages
+	        	if (BSP_UART_data_ready(UART1_ID)){
+	        		c = BSP_UART_getc(UART1_ID);
 
-	                // Libération mémoire après affichage
-	                if (chaineTraduite != NULL)
-	                {
-	                    free(chaineTraduite);
-	                    chaineTraduite = NULL;
-	                }
+	        		if (c == '\n' || c == '\r'){
+	        			buffer[index] = '\0';
+	        	    	index = 0;
 
-	                // Bouton "Quitter session" ou retour automatique
-	                int16_t x, y;
-	                if (XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
-	                {
-	                    if (x > 40 && x < 200 && y > 260 && y < 300)
-	                    {
-	                        PAGE_changerPage(PAGE_ACCUEIL, NULL, 3);
-	                        etatProcessus = ETAT_MENU;
-	                    }
-	                }
-	            }
+	        	    	uint8_t* result = conversionChaineMorse(buffer);
+	        	    	if (result != NULL){
+	        	            memcpy(tableau, result, 20);
+	        	    		etatProcessus = ETAT_AFFICHAGE_MORSE;
+	        			}
+	        		}
+	        	   else if (index < 20)  // stocker le caractère
+	        	   {
+	        		   buffer[index++] = c;
+	        	   }
+
+	    		}
 	            break;
-			*/
+
+	        case ETAT_AFFICHAGE_MORSE:
+	            // Affichage de la chaine traduite
+	        	 // --------------------------------------------------------
+				// Affichage LED
+				// --------------------------------------------------------
+				for (uint8_t i = 0; i < 20; i++)
+				{
+					if      (tableau[i] == 0) pixels[i] = WS2812_COLOR_BLACK;
+					else if (tableau[i] == 1) pixels[i] = WS2812_COLOR_RED;
+					else if (tableau[i] == 2) pixels[i] = WS2812_COLOR_GREEN;
+				}
+				BSP_WS2812_display(pixels, 20);
+				etatProcessus = ETAT_ENVOI_CHAINE;
+				HAL_Delay(100);
+	            break;
 	        default:
 	            break;
 	    }

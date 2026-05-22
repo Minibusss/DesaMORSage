@@ -49,6 +49,8 @@ app/main.o: ../app/main.c ../app/config.h \
  ../app/../drivers/bsp/tft_ili9341/stm32g4_ili9341.h \
  ../drivers/bsp/TFT_ili9341/stm32g4_fonts.h \
  ../app/../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h \
+ ../app/../drivers/bsp/WS2812/stm32g4_ws2812.h \
+ ../app/../drivers/bsp/HC-05/stm32g4_hc05.h \
  ../app/../Morse/stm32g4_morse.h \
  ../app/../ClavierMatriciel/stm32g4_clavier_matriciel.h \
  ../app/../EcranTFT_SPI/stm32g4_ecran_tft_spi.h
@@ -107,6 +109,8 @@ C:/Users/Utilisateur/Documents/FISA/E3a/S6/ElecNum/DesaMORSage/DesaMORSage/Proje
 ../app/../drivers/bsp/tft_ili9341/stm32g4_ili9341.h:
 ../drivers/bsp/TFT_ili9341/stm32g4_fonts.h:
 ../app/../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h:
+../app/../drivers/bsp/WS2812/stm32g4_ws2812.h:
+../app/../drivers/bsp/HC-05/stm32g4_hc05.h:
 ../app/../Morse/stm32g4_morse.h:
 ../app/../ClavierMatriciel/stm32g4_clavier_matriciel.h:
 ../app/../EcranTFT_SPI/stm32g4_ecran_tft_spi.h:

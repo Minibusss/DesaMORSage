@@ -18,7 +18,7 @@
  * @retval Rien
  */
 void ajoutSaisieMotDePasse(uint8_t * pointeurSaisie, uint8_t * indiceSaisie, uint8_t press_key_event){
-	if (*indiceSaisie < 20) {
+	if (*indiceSaisie < 5) {
 	    pointeurSaisie[*indiceSaisie] = press_key_event;
 	    (*indiceSaisie)++;
 	}
