@@ -13,28 +13,30 @@
 #include "config.h"
 #if USE_MATRIX_KEYBOARD
 #include <stdbool.h>
+#include <stdint.h> //Fournit des types entiers à taille fixe (uint8_t, int16_t, uint32_t…)->Indispensable en embarqué pour garantir la taille exacte des variables, quel que soit le compilateur ou l’architecture.
+
 
 // valeurs possibles :
 	//			GPIO du STM32G4					|	GPIOs de l'expander MCP23S17
 	// ports : 	GPIOA, GPIOB, 					|	MCP23S17_PORT_A, MCP23S17_PORT_B
 	// pins : 	GPIO_PIN_x (x from 0 to 15) 	|	MCP23S17_PIN_x (x from 0 to 7)
-#define PORT_INPUT_0 	GPIOA
-#define PORT_INPUT_1 	GPIOA
-#define PORT_INPUT_2 	GPIOA
-#define PORT_INPUT_3 	GPIOB
-#define	PIN_INPUT_0		GPIO_PIN_9
-#define	PIN_INPUT_1		GPIO_PIN_10
-#define	PIN_INPUT_2		GPIO_PIN_12
-#define	PIN_INPUT_3		GPIO_PIN_0
+#define PORT_INPUT_0 	MCP23S17_PORT_A
+#define PORT_INPUT_1 	MCP23S17_PORT_A
+#define PORT_INPUT_2 	MCP23S17_PORT_A
+#define PORT_INPUT_3 	MCP23S17_PORT_A
+#define	PIN_INPUT_0		MCP23S17_PIN_0
+#define	PIN_INPUT_1		MCP23S17_PIN_1
+#define	PIN_INPUT_2		MCP23S17_PIN_2
+#define	PIN_INPUT_3		MCP23S17_PIN_3
 
-#define PORT_OUTPUT_0 	GPIOB
-#define PORT_OUTPUT_1 	GPIOA
-#define PORT_OUTPUT_2 	GPIOA
-#define PORT_OUTPUT_3 	GPIOA
-#define	PIN_OUTPUT_0	GPIO_PIN_7
-#define	PIN_OUTPUT_1	GPIO_PIN_15
-#define	PIN_OUTPUT_2	GPIO_PIN_1
-#define	PIN_OUTPUT_3	GPIO_PIN_0
+#define PORT_OUTPUT_0 	MCP23S17_PORT_A
+#define PORT_OUTPUT_1 	MCP23S17_PORT_A
+#define PORT_OUTPUT_2 	MCP23S17_PORT_A
+#define PORT_OUTPUT_3 	MCP23S17_PORT_A
+#define	PIN_OUTPUT_0	MCP23S17_PIN_4
+#define	PIN_OUTPUT_1	MCP23S17_PIN_5
+#define	PIN_OUTPUT_2	MCP23S17_PIN_6
+#define	PIN_OUTPUT_3	MCP23S17_PIN_7
 
 #define MATRIX_KEYBOARD_HAL_CLOCK_ENABLE()	__HAL_RCC_GPIOA_CLK_ENABLE()
 
@@ -47,7 +49,7 @@
 
 
 void BSP_MATRIX_KEYBOARD_init(const char * new_keyboard_keys);
-void BSP_MATRIX_KEYBOARD_demo_process_main(void);
+void BSP_MATRIX_KEYBOARD_process_main (uint8_t * pointeurSaisie, uint8_t * indiceSaisie);
 void BSP_MATRIX_KEYBOARD_demo_process_1ms(void);
 bool BSP_MATRIX_KEYBOARD_is_pressed(void);
 char BSP_MATRIX_KEYBOARD_get_key(void);

@@ -14,6 +14,9 @@
 #include "stm32g4_systick.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h> //Fournit des types entiers à taille fixe (uint8_t, int16_t, uint32_t…)->Indispensable en embarqué pour garantir la taille exacte des variables, quel que soit le compilateur ou l’architecture.
+
+#include "../../../ClavierMatriciel/stm32g4_clavier_matriciel.h"
 
 #ifdef CONFIG_PULL_UP
 	#define DEFAULT_STATE 		(true)
@@ -45,10 +48,10 @@ static void MATRIX_KEYBOARD_write_bit_output(uint8_t bit);
 
 //Disposition des touches sur le clavier. (attention, ne correspond pas forcément à la disposition physique dans le bon ordre !)
 const char default_keyboard_keys[16] = {
-								'D','#','0','*',
-								'C','9','8','7',
-								'B','6','5','4',
-								'A','3','2','1' };
+					'1','2','3','A',
+					'4','5','6','B',
+					'7','8','9','C',
+					'*','0','#','D'};
 
 char * keyboard_keys;
 static bool initialized = false;
@@ -77,8 +80,8 @@ void BSP_MATRIX_KEYBOARD_init(const char * new_keyboard_keys)
 {
 	MATRIX_KEYBOARD_HAL_CLOCK_ENABLE();
 
-	if((uint32_t)PORT_INPUT_0 <= MCP23S17_PORT_B || (uint32_t)PORT_INPUT_1 <= MCP23S17_PORT_B || (uint32_t)PORT_INPUT_2 <= MCP23S17_PORT_B || (uint32_t)PORT_INPUT_3 <= MCP23S17_PORT_B)
-		BSP_MCP23S17_init();
+	/*if((uint32_t)PORT_INPUT_0 <= MCP23S17_PORT_A || (uint32_t)PORT_INPUT_1 <= MCP23S17_PORT_A || (uint32_t)PORT_INPUT_2 <= MCP23S17_PORT_A || (uint32_t)PORT_INPUT_3 <= MCP23S17_PORT_A)
+		BSP_MCP23S17_init();*/
 
 	keyboard_pin_set_input((uint32_t)PORT_INPUT_0,PIN_INPUT_0);
 	keyboard_pin_set_input((uint32_t)PORT_INPUT_1,PIN_INPUT_1);
@@ -98,7 +101,7 @@ void BSP_MATRIX_KEYBOARD_init(const char * new_keyboard_keys)
  * @brief 	Cette fonction présente de façon simple l'utilisation de ce module logiciel.
  * @note	Cette fonction doit être appelée dans la boucle de tâche de fond.
  */
-void BSP_MATRIX_KEYBOARD_demo_process_main (void)
+void BSP_MATRIX_KEYBOARD_process_main (uint8_t * pointeurSaisie, uint8_t * indiceSaisie)
 {
 	typedef enum
 	{
@@ -121,7 +124,7 @@ void BSP_MATRIX_KEYBOARD_demo_process_main (void)
 			//KEYBOARD_init(custom_keyboard_12_touchs);	//Initialisation du clavier avec un clavier personnalisé 12 touches
 
 			//pensez à renseigner les bons ports dans matrix_keyboard.h en fonction de votre hardware.
-			printf("To run this demo, you should plug a matrix keyboard on the right ports. See matrix_keyboard.h\n");
+			//printf("To run this demo, you should plug a matrix keyboard on the right ports. See matrix_keyboard.h\n");
 			state = RUN;
 			break;
 		case RUN:
@@ -140,6 +143,7 @@ void BSP_MATRIX_KEYBOARD_demo_process_main (void)
 						break;
 					default:
 						printf("%c pressed\n", press_key_event);
+						ajoutSaisieMotDePasse(pointeurSaisie, indiceSaisie, press_key_event);
 						break;
 				}
 				switch(release_key_event)
@@ -237,7 +241,7 @@ char MATRIX_KEYBOARD_get_key(void)
 }
 
 /**
- * @brief Regarde si plusieur, 0 ou 1 seul touche(s) à/ont été touchée(s). Si 1 seul touche: elle renvoit la lettre ascii correspondante sur le clavier.
+ * @brief Regarde si plusieurs, 0 ou 1 seul touche(s) à/ont été touchée(s). Si 1 seul touche: elle renvoit la lettre ascii correspondante sur le clavier.
  * @param touchs_pressed: un chiffre qui, une fois écrit en binaire, indique quelle(s) touche(s) à /ont été touchée(s) (ex: 0000000000010000 = keyboard_keys[4] = 'C')
  * @return soit NO_KEY, soit MANY_KEYS, soit le caractère appuyé ou relaché sur le clavier
  */
@@ -338,7 +342,7 @@ static char * warning_string = "you should clarify the parameters according to t
 
 static void keyboard_pin_set_output(uint32_t port, uint16_t pin)
 {
-	if(port <= MCP23S17_PORT_B && pin && ((pin&(pin-1))==0))	//on v�rifie que pin est bien une puissance de 2.
+	if(port <= MCP23S17_PORT_A && pin && ((pin&(pin-1))==0))	//on v�rifie que pin est bien une puissance de 2.
 	{
 		if(!mcp23s17_initialized)
 		{
@@ -359,7 +363,7 @@ static void keyboard_pin_set_output(uint32_t port, uint16_t pin)
 
 static void keyboard_pin_set_input(uint32_t port, uint16_t pin)
 {
-	if(port <= MCP23S17_PORT_B && pin && ((pin&(pin-1))==0))	//on v�rifie que pin est bien une puissance de 2.
+	if(port <= MCP23S17_PORT_A && pin && ((pin&(pin-1))==0))	//on v�rifie que pin est bien une puissance de 2.
 	{
 		if(!mcp23s17_initialized)
 		{
@@ -381,7 +385,7 @@ static void keyboard_pin_set_input(uint32_t port, uint16_t pin)
 
 static void keyboard_pin_write(uint32_t port, uint16_t pin, bool state)
 {
-	if(port <= MCP23S17_PORT_B && pin && ((pin&(pin-1))==0))	//on v�rifie que pin est bien une puissance de 2.
+	if(port <= MCP23S17_PORT_A && pin && ((pin&(pin-1))==0))	//on v�rifie que pin est bien une puissance de 2.
 	{
 		if(!mcp23s17_initialized)
 		{

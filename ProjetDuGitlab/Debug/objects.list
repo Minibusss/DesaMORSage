@@ -1,3 +1,6 @@
+"./ClavierMatriciel/stm32g4_clavier_matriciel.o"
+"./GestionUtilisateurRFID/stm32g4_gestion_rfid.o"
+"./GestionUtilisateurRFID/stm32g4_gestion_utilisateur.o"
 "./Morse/stm32g4_morse.o"
 "./app/main.o"
 "./core/Src/stm32g4xx_it.o"

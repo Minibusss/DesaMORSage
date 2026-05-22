@@ -44,8 +44,14 @@ app/main.o: ../app/main.c ../app/config.h \
  ../app/config.h ../drivers/bsp/stm32g4_utils.h \
  ../drivers/bsp/stm32g4_systick.h ../drivers/bsp/stm32g4_gpio.h \
  ../drivers/bsp/stm32g4_uart.h ../drivers/bsp/stm32g4_utils.h \
+ ../app/../drivers/bsp/MCP23S17/stm32g4_mcp23s17.h \
  C:/Users/Utilisateur/Documents/FISA/E3a/S6/ElecNum/DesaMORSage/DesaMORSage/ProjetDuGitlab/drivers/bsp/MatrixKeyboard/stm32g4_matrix_keyboard.h \
- ../app/../Morse/stm32g4_morse.h
+ ../app/../drivers/bsp/tft_ili9341/stm32g4_ili9341.h \
+ ../drivers/bsp/TFT_ili9341/stm32g4_fonts.h \
+ ../app/../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h \
+ ../app/../Morse/stm32g4_morse.h \
+ ../app/../ClavierMatriciel/stm32g4_clavier_matriciel.h \
+ ../app/../EcranTFT_SPI/stm32g4_ecran_tft_spi.h
 ../app/config.h:
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal.h:
 ../core/Inc/stm32g4xx_hal_conf.h:
@@ -96,5 +102,11 @@ app/main.o: ../app/main.c ../app/config.h \
 ../drivers/bsp/stm32g4_gpio.h:
 ../drivers/bsp/stm32g4_uart.h:
 ../drivers/bsp/stm32g4_utils.h:
+../app/../drivers/bsp/MCP23S17/stm32g4_mcp23s17.h:
 C:/Users/Utilisateur/Documents/FISA/E3a/S6/ElecNum/DesaMORSage/DesaMORSage/ProjetDuGitlab/drivers/bsp/MatrixKeyboard/stm32g4_matrix_keyboard.h:
+../app/../drivers/bsp/tft_ili9341/stm32g4_ili9341.h:
+../drivers/bsp/TFT_ili9341/stm32g4_fonts.h:
+../app/../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h:
 ../app/../Morse/stm32g4_morse.h:
+../app/../ClavierMatriciel/stm32g4_clavier_matriciel.h:
+../app/../EcranTFT_SPI/stm32g4_ecran_tft_spi.h:

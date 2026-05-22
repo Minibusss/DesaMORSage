@@ -40,7 +40,12 @@ drivers/bsp/tft_ili9341/stm32g4_ili9341.o: \
  ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_tim.h \
  ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_tim_ex.h \
  ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart.h \
- ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart_ex.h
+ ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart_ex.h \
+ ../drivers/bsp/TFT_ili9341/stm32g4_ili9341.h \
+ ../drivers/bsp/TFT_ili9341/stm32g4_fonts.h ../drivers/bsp/stm32g4_spi.h \
+ ../drivers/cmsis/Device/ST/STM32G4xx/Include/stm32g431xx.h \
+ ../drivers/bsp/stm32g4_utils.h ../drivers/bsp/stm32g4_gpio.h \
+ ../drivers/bsp/tft_ili9341/stm32g4_fonts.h
 ../app/config.h:
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal.h:
 ../core/Inc/stm32g4xx_hal_conf.h:
@@ -83,3 +88,10 @@ drivers/bsp/tft_ili9341/stm32g4_ili9341.o: \
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_tim_ex.h:
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart.h:
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal_uart_ex.h:
+../drivers/bsp/TFT_ili9341/stm32g4_ili9341.h:
+../drivers/bsp/TFT_ili9341/stm32g4_fonts.h:
+../drivers/bsp/stm32g4_spi.h:
+../drivers/cmsis/Device/ST/STM32G4xx/Include/stm32g431xx.h:
+../drivers/bsp/stm32g4_utils.h:
+../drivers/bsp/stm32g4_gpio.h:
+../drivers/bsp/tft_ili9341/stm32g4_fonts.h:

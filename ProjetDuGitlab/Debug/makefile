@@ -46,6 +46,8 @@ RM := rm -rf
 -include core/Src/subdir.mk
 -include app/subdir.mk
 -include Morse/subdir.mk
+-include GestionUtilisateurRFID/subdir.mk
+-include ClavierMatriciel/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

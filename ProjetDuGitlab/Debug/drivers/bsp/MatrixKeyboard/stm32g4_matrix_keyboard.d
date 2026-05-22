@@ -44,7 +44,8 @@ drivers/bsp/MatrixKeyboard/stm32g4_matrix_keyboard.o: \
  ../drivers/bsp/MatrixKeyboard/stm32g4_matrix_keyboard.h \
  ../drivers/bsp/MCP23S17/stm32g4_mcp23s17.h \
  ../drivers/bsp/stm32g4_utils.h ../drivers/bsp/stm32g4_systick.h \
- ../drivers/bsp/stm32g4_utils.h
+ ../drivers/bsp/stm32g4_utils.h \
+ ../drivers/bsp/MatrixKeyboard/../../../ClavierMatriciel/stm32g4_clavier_matriciel.h
 ../app/config.h:
 ../drivers/stm32g4xx_hal/Inc/stm32g4xx_hal.h:
 ../core/Inc/stm32g4xx_hal_conf.h:
@@ -92,3 +93,4 @@ drivers/bsp/MatrixKeyboard/stm32g4_matrix_keyboard.o: \
 ../drivers/bsp/stm32g4_utils.h:
 ../drivers/bsp/stm32g4_systick.h:
 ../drivers/bsp/stm32g4_utils.h:
+../drivers/bsp/MatrixKeyboard/../../../ClavierMatriciel/stm32g4_clavier_matriciel.h:
