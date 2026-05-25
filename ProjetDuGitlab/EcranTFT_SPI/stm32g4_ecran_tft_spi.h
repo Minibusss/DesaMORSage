@@ -4,26 +4,28 @@
  *  Created on: 09 may 2026
  *      Author: agedo
  */
-
 #ifndef STM32G4_ECRAN_TFT_SPI_H_
 #define STM32G4_ECRAN_TFT_SPI_H_
 
-/* ---- Types ---- */
+#include <stdint.h>
+
 typedef enum {
     PAGE_ACCUEIL,
-    PAGE_MENU,
-    PAGE_SCAN_RFID,
     PAGE_MDP,
-    PAGE_ENVOI_B,
-    PAGE_AFFICHAGE_CHAINE,
+    PAGE_ENVOI_BT,
+    PAGE_MORSE,
 } Page_e;
 
-void PAGE_afficherAccueil(void);
-void PAGE_afficherScanRFID(void);
-void PAGE_afficherMDP(char *nomUtilisateur, uint8_t tentativesRestantes);
-void PAGE_afficherEnvoiB(void);
-void PAGE_changerPage(Page_e nouvellePage, char *nomUtilisateur, uint8_t tentatives);
-void PAGE_handleTouch(void);
-uint8_t lectureBoutonValiderMDP(void);
+typedef enum {
+    BOUTON_AUCUN,
+    BOUTON_SAISIR_MDP,
+    BOUTON_VALIDER,
+    BOUTON_ACTIVER_BT,
+    BOUTON_NOUVELLE_RECEPTION,
+    BOUTON_ACCUEIL,
+} BOUTON_e;
+
+void PAGE_changerPage(Page_e nouvellePage, uint8_t nbCaractereSaisis, int8_t *chaineTraduite);
+BOUTON_e PAGE_lireBouton(void);
 
 #endif

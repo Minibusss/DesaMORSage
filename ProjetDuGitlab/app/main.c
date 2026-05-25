@@ -117,82 +117,87 @@ int main(void)
     BSP_WS2812_display(pixels, 20);
 
 
+ 	ETAT etatProcessus = ETAT_INIT;
+	bool receptionActive = false;
 
 	while (1)
 	{
 	    switch(etatProcessus)
 	    {
-	        case ETAT_INIT:
-	            //PAGE_changerPage(PAGE_ACCUEIL, NULL, 3);
-	            //etatProcessus = ETAT_MENU;
-	            break;
+	    	case ETAT_INIT:
+				PAGE_changerPage(PAGE_ACCUEIL, 0, NULL);
+				etatProcessus = ETAT_LECTURE_MDP;  // Attend le bouton
+				break;
 
+			case ETAT_LECTURE_MDP:
+				PAGE_changerPage(PAGE_MDP, 0, NULL);  // Affiche la page une fois
+				// Gestion dans la boucle ci-dessous
+				// Lecture clavier
+				BSP_MATRIX_KEYBOARD_process_main(pointeurSaisie, indiceSaisie);
+				// Mise à jour des * à chaque nouveau caractère
+				PAGE_afficherMDP(indiceMotDePasse);
 
-	        	/*
-	            // On attend que l'utilisateur appuie sur "Renseigner un mdp
-	            // Le tactile est géré ici directement
-	            {
-	                int16_t x, y;
-	                if (XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
-	                {
-	                    // Bouton "Scanner Badge" : (40,200) -> (200,240)
-	                    if (x > 40 && x < 200 && y > 200 && y < 240)
-	                    {
-	                        PAGE_changerPage(PAGE_SCAN_RFID, NULL, tentativesRestantes);
-	                        etatProcessus = ETAT_LECTURE_MDP;
-	                    }
-	                }
-	            }*/
+				if (PAGE_lireBouton() == BOUTON_VALIDER) {
+					if (/* vérification MDP */ indiceMotDePasse >= 5) {
+						PAGE_changerPage(PAGE_ENVOI_BT, 0, NULL);
+						receptionActive = false;
+						etatProcessus = ETAT_ENVOI_CHAINE;
+					}
+				}
+				break;
 
+			case ETAT_ENVOI_CHAINE:
+				switch (PAGE_lireBouton()) {
+					case BOUTON_ACTIVER_BT:   receptionActive = true;  break;
+					case BOUTON_ACCUEIL:
+						receptionActive = false;
+						PAGE_changerPage(PAGE_ACCUEIL, 0, NULL);
+						etatProcessus = ETAT_LECTURE_MDP;
+						break;
+					default: break;
+				}
 
-	        case ETAT_LECTURE_MDP:
-	            // Lecture du clavier matriciel
-	        	//Ici ne change pas d'état tant que le mdp n'est pas bon
-	            BSP_MATRIX_KEYBOARD_process_main(pointeurSaisie, indiceSaisie);
-	            if(indiceMotDePasse == 5){ //EGAL AU MDP
-	            	etatProcessus = ETAT_ENVOI_CHAINE;
-	            }
-	            break;
+				if (receptionActive && BSP_UART_data_ready(UART1_ID)) {
+					c = BSP_UART_getc(UART1_ID);
+					if (c == '\n' || c == '\r') {
+						buffer[index] = '\0';
+						index = 0;
+						uint8_t* result = conversionChaineMorse(buffer);
+						if (result != NULL) {
+							memcpy(tableau, result, 20);
+							PAGE_changerPage(PAGE_MORSE, 0, (int8_t*)result);
+							etatProcessus = ETAT_AFFICHAGE_MORSE;
+						}
+					} else if (index < 20) {
+						buffer[index++] = c;
+					}
+				}
+				break;
 
-	        case ETAT_ENVOI_CHAINE:
-	        	if (BSP_UART_data_ready(UART1_ID)){
-	        		c = BSP_UART_getc(UART1_ID);
-
-	        		if (c == '\n' || c == '\r'){
-	        			buffer[index] = '\0';
-	        	    	index = 0;
-
-	        	    	uint8_t* result = conversionChaineMorse(buffer);
-	        	    	if (result != NULL){
-	        	            memcpy(tableau, result, 20);
-	        	    		etatProcessus = ETAT_AFFICHAGE_MORSE;
-	        			}
-	        		}
-	        	   else if (index < 20)  // stocker le caractère
-	        	   {
-	        		   buffer[index++] = c;
-	        	   }
-
-	    		}
-	            break;
-
-	        case ETAT_AFFICHAGE_MORSE:
-	            // Affichage de la chaine traduite
-	        	 // --------------------------------------------------------
-				// Affichage LED
-				// --------------------------------------------------------
-				for (uint8_t i = 0; i < 20; i++)
-				{
+			case ETAT_AFFICHAGE_MORSE:
+				// LEDs
+				for (uint8_t i = 0; i < 20; i++) {
 					if      (tableau[i] == 0) pixels[i] = WS2812_COLOR_BLACK;
 					else if (tableau[i] == 1) pixels[i] = WS2812_COLOR_RED;
 					else if (tableau[i] == 2) pixels[i] = WS2812_COLOR_GREEN;
 				}
 				BSP_WS2812_display(pixels, 20);
-				etatProcessus = ETAT_ENVOI_CHAINE;
-				HAL_Delay(100);
-	            break;
-	        default:
-	            break;
-	    }
+
+				switch (PAGE_lireBouton()) {
+					case BOUTON_NOUVELLE_RECEPTION:
+						PAGE_changerPage(PAGE_ENVOI_BT, 0, NULL);
+						receptionActive = false;
+						etatProcessus = ETAT_ENVOI_CHAINE;
+						break;
+					case BOUTON_ACCUEIL:
+						PAGE_changerPage(PAGE_ACCUEIL, 0, NULL);
+						etatProcessus = ETAT_LECTURE_MDP;
+						break;
+					default: 
+						break;
+				}
+    		default :
+				break;
+			}
 	 }
 }
