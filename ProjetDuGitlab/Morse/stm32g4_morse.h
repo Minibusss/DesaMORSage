@@ -1,8 +1,10 @@
-/*
- * stm32g4_morse.h
- *
- *  Created on: 10 avr. 2026
- *      Author: Alice GEDOUX
+/**
+ *******************************************************************************
+ * @file 	stm32g4_morse.h
+ * @author 	Alice GEDOUX
+ * @date 	Avr 10, 2026
+ * @brief	Module pour convertir une chaine de caractères en morse.
+ *******************************************************************************
  */
 
 #ifndef STM32G4_MORSE_H_

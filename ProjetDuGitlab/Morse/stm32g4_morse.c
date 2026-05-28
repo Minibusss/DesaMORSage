@@ -3,7 +3,7 @@
  * @file 	stm32g4_morse.c
  * @author 	Alice GEDOUX
  * @date 	Avr 10, 2026
- * @brief	Fichier principal pour convertir une chaine de 5 caractères en morse
+ * @brief	Fichier principal pour convertir une chaine de 5 caractères en morse.
  *******************************************************************************
  */
 #ifdef TEST
@@ -80,7 +80,7 @@ uint8_t nombreElements = 0;
 
 /**
   * @brief  La fonction permet de vérifier que la chaine est dans le bon format (que ce sont les caractères alphabétiques) et d'ajouter au maximum 5 caractères dans chaineAUtiliser.
-  * @param  Chaine à convertir en morse.
+  * @param  int8_t * chaineAConvertir : pointeur vers la chaine à convertir en morse.
   * @retval Renvoie un entier.
  */
 PRIVATE uint8_t verifierChaineValide(int8_t * chaineAConvertir){
@@ -103,7 +103,7 @@ PRIVATE uint8_t verifierChaineValide(int8_t * chaineAConvertir){
 
 /**
   * @brief  La fonction permet de vérifier que la chaine est dans le bon format.
-  * @param  Chaine à convertir en morse.
+  * @param  int8_t * chaineAConvertir : pointeur vers la chaine à convertir en morse.
   * @retval Renvoie le pointeur vers la chaine convertie.
  */
 uint8_t* conversionChaineMorse(int8_t * chaineAConvertir){
