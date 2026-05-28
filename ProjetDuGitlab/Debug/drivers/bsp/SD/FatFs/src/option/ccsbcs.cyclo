@@ -1,2 +1,0 @@
-../drivers/bsp/SD/FatFs/src/option/ccsbcs.c:501:7:ff_convert	6
-../drivers/bsp/SD/FatFs/src/option/ccsbcs.c:528:7:ff_wtoupper	4
