@@ -1,0 +1,134 @@
+/**
+ *******************************************************************************
+ * @file 	stm32g4_ecran_tft_spi.c
+ * @author 	Alice GEDOUX
+ * @date 	Mai 09, 2026
+ * @brief	Fichier principal pour afficher les pages sur l'écran SPI.
+ *******************************************************************************
+ */
+#include "stm32g4_ecran_tft_spi.h"
+#include "../drivers/bsp/tft_ili9341/stm32g4_ili9341.h" //Importation de la librairie qui gère l'affichage
+#include "../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h" //Importation de la librarie qui gère le tactile
+
+static Page_e pageCourante = PAGE_ACCUEIL;
+
+/**
+  * @brief  La fonction permet d'afficher sur l'écran la "PAGE D'ACCUEIL".
+  * @param  Rien.
+  * @retval Rien.
+ */
+void PAGE_afficherAccueil(void) {
+    ILI9341_Fill(ILI9341_COLOR_BLACK);
+    ILI9341_Puts(25, 40,  "DesaMORSage",    &Font_16x26, ILI9341_COLOR_YELLOW, ILI9341_TRANSPARENT);
+    ILI9341_Puts(20, 90,  "CIROU Nicolas",  &Font_11x18, ILI9341_COLOR_WHITE,  ILI9341_TRANSPARENT);
+    ILI9341_Puts(20, 115, "GEDOUX Alice",   &Font_11x18, ILI9341_COLOR_WHITE,  ILI9341_TRANSPARENT);
+
+    // Bouton "Saisir MDP"
+    ILI9341_DrawFilledRectangle(40, 220, 200, 260, ILI9341_COLOR_BLUE);
+    ILI9341_Puts(60, 232, "Saisir MDP", &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_COLOR_BLUE);
+}
+
+/**
+  * @brief  La fonction permet d'afficher sur l'écran la "PAGE MDP" et d'afficher des * dès qu'une touche
+  * du clavier matriciel est enfoncée.
+  * @param  uint8_t nbCaractereSaisis : le nombre de caractères saisi avec le clavier matriciel.
+  * @retval Rien.
+ */
+void PAGE_afficherMDP(uint8_t nbCaractereSaisis) {
+    ILI9341_Fill(ILI9341_COLOR_BLACK);
+    ILI9341_Puts(10, 40, "Saisissez votre", &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+    ILI9341_Puts(10, 65, "mot de passe :",  &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+
+    // Zone de saisie
+    ILI9341_DrawRectangle(10, 100, 230, 130, ILI9341_COLOR_GRAY);
+
+    // Affichage des *
+    char etoiles[21] = "\0";
+    for (uint8_t i = 0; i < nbCaractereSaisis && i < 20; i++)
+        etoiles[i] = '*';
+    ILI9341_Puts(15, 108, etoiles, &Font_11x18, ILI9341_COLOR_GREEN, ILI9341_COLOR_BLACK);
+
+    // Bouton Valider
+    ILI9341_DrawFilledRectangle(60, 220, 180, 260, ILI9341_COLOR_GREEN);
+    ILI9341_Puts(75, 232, "Valider", &Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN);
+}
+
+/**
+  * @brief  La fonction permet d'afficher sur l'écran la "PAGE BLUETOOTH".
+  * @param  Rien
+  * @retval Rien
+ */
+void PAGE_afficherEnvoiBT(void) {
+    ILI9341_Fill(ILI9341_COLOR_BLACK);
+    ILI9341_Puts(10, 40,  "Connectez-vous",   &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+    ILI9341_Puts(10, 65,  "via Bluetooth",    &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+    ILI9341_Puts(10, 90,  "puis envoyez",     &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+    ILI9341_Puts(10, 115, "votre chaine.",    &Font_11x18, ILI9341_COLOR_CYAN,  ILI9341_TRANSPARENT);
+
+    // Bouton "Activer réception"
+    ILI9341_DrawFilledRectangle(20, 180, 220, 220, ILI9341_COLOR_GREEN);
+    ILI9341_Puts(30, 192, "Activer reception", &Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN);
+
+    // Bouton "Accueil"
+    ILI9341_DrawFilledRectangle(60, 250, 180, 285, ILI9341_COLOR_RED);
+    ILI9341_Puts(75, 260, "Accueil", &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_COLOR_RED);
+}
+
+/**
+  * @brief  La fonction permet de changer de page.
+  * @param  Page_e nouvellePage : permet de connaitre quelle page est à afficher sur l'écran.
+  * @param  uint8_t nbCaractereSaisis : le nombre de caractères saisi avec le clavier matriciel.
+  * @param 	int8_t *chaineTraduite : pointeur vers la chaine de caractères traduite.
+  * @retval Rien.
+ */
+void PAGE_changerPage(Page_e nouvellePage, uint8_t nbCaractereSaisis, int8_t *chaineTraduite) {
+    pageCourante = nouvellePage;
+    switch (pageCourante) {
+        case PAGE_ACCUEIL:    PAGE_afficherAccueil();                      break;
+        case PAGE_MDP:        PAGE_afficherMDP(nbCaractereSaisis);         break;
+        case PAGE_ENVOI_BT:   PAGE_afficherEnvoiBT();                      break;
+        default: break;
+    }
+}
+
+/**
+  * @brief  La fonction permet de gérer et de détécter les appuis sur les "boutons tactiles"
+  * @param  Rien.
+  * @retval Renvoi le type de bouton préssé.
+ */
+BOUTON_e PAGE_lireBouton(void) {
+    int16_t x, y;
+
+    if (!XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
+        return BOUTON_AUCUN;
+
+    switch (pageCourante) {
+
+        case PAGE_ACCUEIL:
+            if (x > 40 && x < 200 && y > 220 && y < 260)
+                return BOUTON_SAISIR_MDP;
+            break;
+
+        case PAGE_MDP:
+            if (x > 60 && x < 180 && y > 220 && y < 260)
+                return BOUTON_VALIDER;
+            break;
+
+        case PAGE_ENVOI_BT:
+            if (x > 20 && x < 220 && y > 180 && y < 220)
+                return BOUTON_ACTIVER_BT;
+            if (x > 60 && x < 180 && y > 250 && y < 285)
+                return BOUTON_ACCUEIL;
+            break;
+
+        case PAGE_MORSE:
+            if (x > 10 && x < 230 && y > 180 && y < 220)
+                return BOUTON_NOUVELLE_RECEPTION;
+            if (x > 60 && x < 180 && y > 250 && y < 285)
+                return BOUTON_ACCUEIL;
+            break;
+
+        default: break;
+    }
+    return BOUTON_AUCUN;
+}

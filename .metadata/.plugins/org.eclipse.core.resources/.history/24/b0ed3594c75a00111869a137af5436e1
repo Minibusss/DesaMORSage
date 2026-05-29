@@ -1,0 +1,138 @@
+/*
+ * stm32g4_ecran_tft_spi.c
+ */
+
+#include "stm32g4_ecran_tft_spi.h"
+#include "../drivers/bsp/tft_ili9341/stm32g4_ili9341.h"
+#include "../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h"
+
+static Page_e pageCourante = PAGE_ACCUEIL;
+
+/* ============================================================
+ *  PAGE ACCUEIL
+ * ============================================================ */
+void PAGE_afficherAccueil(void) {
+    ILI9341_Fill(ILI9341_COLOR_BLACK);
+    ILI9341_Puts(25, 40,  "DesaMORSage",    &Font_16x26, ILI9341_COLOR_YELLOW, ILI9341_TRANSPARENT);
+    ILI9341_Puts(20, 90,  "CIROU Nicolas",  &Font_11x18, ILI9341_COLOR_WHITE,  ILI9341_TRANSPARENT);
+    ILI9341_Puts(20, 115, "GEDOUX Alice",   &Font_11x18, ILI9341_COLOR_WHITE,  ILI9341_TRANSPARENT);
+
+    // Bouton "Saisir MDP"
+    ILI9341_DrawFilledRectangle(40, 220, 200, 260, ILI9341_COLOR_BLUE);
+    ILI9341_Puts(60, 232, "Saisir MDP", &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_COLOR_BLUE);
+}
+
+/* ============================================================
+ *  PAGE MDP
+ *  Affiche les * au fur et à mesure + bouton Valider
+ * ============================================================ */
+void PAGE_afficherMDP(uint8_t nbCaractereSaisis) {
+    ILI9341_Fill(ILI9341_COLOR_BLACK);
+    ILI9341_Puts(10, 40, "Saisissez votre", &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+    ILI9341_Puts(10, 65, "mot de passe :",  &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+
+    // Zone de saisie
+    ILI9341_DrawRectangle(10, 100, 230, 130, ILI9341_COLOR_GRAY);
+
+    // Affichage des *
+    char etoiles[21] = "\0";
+    for (uint8_t i = 0; i < nbCaractereSaisis && i < 20; i++)
+        etoiles[i] = '*';
+    ILI9341_Puts(15, 108, etoiles, &Font_11x18, ILI9341_COLOR_GREEN, ILI9341_COLOR_BLACK);
+
+    // Bouton Valider
+    ILI9341_DrawFilledRectangle(60, 220, 180, 260, ILI9341_COLOR_GREEN);
+    ILI9341_Puts(75, 232, "Valider", &Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN);
+}
+
+/* ============================================================
+ *  PAGE ENVOI BLUETOOTH
+ * ============================================================ */
+void PAGE_afficherEnvoiBT(void) {
+    ILI9341_Fill(ILI9341_COLOR_BLACK);
+    ILI9341_Puts(10, 40,  "Connectez-vous",   &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+    ILI9341_Puts(10, 65,  "via Bluetooth",    &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+    ILI9341_Puts(10, 90,  "puis envoyez",     &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+    ILI9341_Puts(10, 115, "votre chaine.",    &Font_11x18, ILI9341_COLOR_CYAN,  ILI9341_TRANSPARENT);
+
+    // Bouton "Activer réception"
+    ILI9341_DrawFilledRectangle(20, 180, 220, 220, ILI9341_COLOR_GREEN);
+    ILI9341_Puts(30, 192, "Activer reception", &Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN);
+
+    // Bouton "Accueil"
+    ILI9341_DrawFilledRectangle(60, 250, 180, 285, ILI9341_COLOR_RED);
+    ILI9341_Puts(75, 260, "Accueil", &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_COLOR_RED);
+}
+
+/* ============================================================
+ *  PAGE MORSE
+ *  Affiche la chaine traduite
+ * ============================================================ */
+void PAGE_afficherMorse(int8_t *chaineTraduite) {
+    ILI9341_Fill(ILI9341_COLOR_BLACK);
+    ILI9341_Puts(10, 20, "Resultat Morse :", &Font_11x18, ILI9341_COLOR_YELLOW, ILI9341_TRANSPARENT);
+
+    if (chaineTraduite != NULL)
+        ILI9341_Puts(10, 55, (char*)chaineTraduite, &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_TRANSPARENT);
+
+    // Bouton "Nouvelle reception"
+    ILI9341_DrawFilledRectangle(10, 180, 230, 215, ILI9341_COLOR_GREEN);
+    ILI9341_Puts(20, 192, "Nouvelle reception", &Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN);
+
+    // Bouton "Accueil"  ← coordonnées dans l'écran (max y=320)
+    ILI9341_DrawFilledRectangle(60, 230, 180, 265, ILI9341_COLOR_RED);
+    ILI9341_Puts(75, 242, "Accueil", &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_COLOR_RED);
+}
+/* ============================================================
+ *  CHANGER DE PAGE
+ * ============================================================ */
+void PAGE_changerPage(Page_e nouvellePage, uint8_t nbCaractereSaisis, int8_t *chaineTraduite) {
+    pageCourante = nouvellePage;
+    switch (pageCourante) {
+        case PAGE_ACCUEIL:    PAGE_afficherAccueil();                      break;
+        case PAGE_MDP:        PAGE_afficherMDP(nbCaractereSaisis);         break;
+        case PAGE_ENVOI_BT:   PAGE_afficherEnvoiBT();                      break;
+        case PAGE_MORSE:      PAGE_afficherMorse(chaineTraduite);          break;
+        default: break;
+    }
+}
+
+/* ============================================================
+ *  LECTURE TACTILE — retourne le bouton appuyé
+ * ============================================================ */
+BOUTON_e PAGE_lireBouton(void) {
+    int16_t x, y;
+
+    if (!XPT2046_getMedianCoordinates(&x, &y, XPT2046_COORDINATE_SCREEN_RELATIVE))
+        return BOUTON_AUCUN;
+
+    switch (pageCourante) {
+
+        case PAGE_ACCUEIL:
+            if (x > 40 && x < 200 && y > 220 && y < 260)
+                return BOUTON_SAISIR_MDP;
+            break;
+
+        case PAGE_MDP:
+            if (x > 60 && x < 180 && y > 220 && y < 260)
+                return BOUTON_VALIDER;
+            break;
+
+        case PAGE_ENVOI_BT:
+            if (x > 20 && x < 220 && y > 180 && y < 220)
+                return BOUTON_ACTIVER_BT;
+            if (x > 60 && x < 180 && y > 250 && y < 285)
+                return BOUTON_ACCUEIL;
+            break;
+
+        case PAGE_MORSE:
+            if (x > 10 && x < 230 && y > 180 && y < 220)
+                return BOUTON_NOUVELLE_RECEPTION;
+            if (x > 60 && x < 180 && y > 250 && y < 285)
+                return BOUTON_ACCUEIL;
+            break;
+
+        default: break;
+    }
+    return BOUTON_AUCUN;
+}

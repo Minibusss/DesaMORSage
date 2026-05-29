@@ -1,0 +1,148 @@
+/**
+ *******************************************************************************
+ * @file 	test_morse.c
+ * @author 	Alice GEDOUX
+ * @date 	Avr 27, 2026
+ * @brief	Fichier principal pour ajouter une nouvelle entrée du clavier
+ * matriciel dans le tableau contenant le MDP
+ *******************************************************************************
+ */
+
+#include "unity.h"
+#include "test_morse.h"
+
+
+/**
+ * @brief la fonction peut permettre de réinitialiser des variables globales, allouer de la mémoire, remettre un module dans un état propre
+	préparer un contexte de test. Ici nous n'en avons pas besoin car les variables globales sont déjà réinitialisées dans le fichier morse.c
+ * @param rien
+ * @retval rien
+ */
+void setUp(void) {}
+
+/**
+ * @brief la fonction peut permettre de libérer de la mémoire, nettoyer des buffers,remettre des flags à zéro
+ * @param rien
+ * @retval rien
+ */
+void tearDown(void) {}
+
+/**
+ * @brief la fonction permet de regrouper tous les tests pour la fonction verifierChaineValide
+ * @param rien
+ * @retval rien
+ */
+void test_verifierChaineValide(void)
+{
+	//Tests avec une chaine valide : ne prennent en compte que les lettres
+	TEST_ASSERT_EQUAL_UINT8_MESSAGE(1,verifierChaineValide("ABC"),"La fonction renvoie 1 (vrai) si le nbrElement > 0.");
+	TEST_ASSERT_EQUAL_UINT8_MESSAGE(1,verifierChaineValide("aBc"),"La fonction renvoie 1 (vrai) si le nbrElement > 0.");
+	TEST_ASSERT_EQUAL_UINT8_MESSAGE(1,verifierChaineValide("ABCDZ"),"La fonction renvoie 1 (vrai) si le nbrElement > 0.");
+	TEST_ASSERT_EQUAL_UINT8_MESSAGE(1,verifierChaineValide("ABCD#Z"),"La fonction renvoie 1 (vrai) si le nbrElement > 0.");
+
+	//Tests avec une chaine non valide :
+	TEST_ASSERT_EQUAL_UINT8_MESSAGE(0,verifierChaineValide("123"),"La fonction renvoie 0 (faux) si le nbrElement < 0.");
+	TEST_ASSERT_EQUAL_UINT8_MESSAGE(0,verifierChaineValide("!@#"),"La fonction renvoie 0 (faux) si le nbrElement < 0.");
+	TEST_ASSERT_EQUAL_UINT8_MESSAGE(0,verifierChaineValide(""),"La fonction renvoie 0 (faux) si le nbrElement < 0.");
+}
+
+/**
+ * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine ABCDE
+ * @param rien
+ * @retval rien
+ */
+void test_conversionChaineABCDE(void)
+{
+    uint8_t expectedABCDE[20] = {1,2,0,0,2,1,1,1,2,1,2,1,2,1,1,0,1,0,0,0};
+	//TEST ABCDE
+    uint8_t *resultABCDE = conversionChaineMorse("ABCDE");
+    TEST_ASSERT_NOT_NULL(resultABCDE);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(expectedABCDE, &resultABCDE[0], 20);   // ABCDE : permet de comparer tout le tableau pour A avec les quatres premiers éléments dans le tableau résultat
+}
+
+/**
+ * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine FGHIJ
+ * @param rien
+ * @retval rien
+ */
+void test_conversionChaineFGHIJ(void)
+{
+	uint8_t expectedFGHIJ[20] = {1,1,2,1,2,2,1,0,1,1,1,1,1,1,0,0,1,2,2,2};
+	//TEST FGHIJ
+	uint8_t *resultFGHIJ = conversionChaineMorse("FGHIJ");
+	TEST_ASSERT_NOT_NULL(resultFGHIJ);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(expectedFGHIJ, &resultFGHIJ[0], 20);   // FGHIJ
+}
+
+/**
+ * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine KLMNO
+ * @param rien
+ * @retval rien
+ */
+void test_conversionChaineKLMNO(void)
+{
+	uint8_t expectedKLMNO[20] = {2,1,2,0,1,2,1,1,2,2,0,0,2,1,0,0,2,2,2,0};
+	//TEST KLMNO
+	uint8_t *resultKLMNO = conversionChaineMorse("KLMNO");
+	TEST_ASSERT_NOT_NULL(resultKLMNO);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(expectedKLMNO, &resultKLMNO[0], 20);   // KLMNO
+}
+
+/**
+ * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine PQRST
+ * @param rien
+ * @retval rien
+ */
+void test_conversionChainePQRST(void)
+{
+	uint8_t expectedPQRST[20] = {1,2,2,1,2,2,1,2,1,2,1,0,1,1,1,0,2,0,0,0};
+	//TEST PGRST
+	uint8_t *resultPQRST = conversionChaineMorse("PQRST");
+	TEST_ASSERT_NOT_NULL(resultPQRST);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(expectedPQRST, &resultPQRST[0], 20);   // PQRST
+}
+
+/**
+ * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine UVWXY
+ * @param rien
+ * @retval rien
+ */
+void test_conversionChaineUVWXY(void)
+{
+	uint8_t expectedUVWXY[20] = {1,1,2,0,1,1,1,2,1,2,2,0,2,1,1,2,2,1,2,2};
+	//TEST UVWXY
+	uint8_t *resultUVWXY = conversionChaineMorse("UVWXY");
+	TEST_ASSERT_NOT_NULL(resultUVWXY);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(expectedUVWXY, &resultUVWXY[0], 20);   // UVWXY
+
+}
+
+/**
+ * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine Z
+ * @param rien
+ * @retval rien
+ */
+void test_conversionChaineZ(void)
+{
+	uint8_t expectedZ[20] = {2,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	//TEST Z
+	uint8_t *resultZ = conversionChaineMorse("Z");
+	TEST_ASSERT_NOT_NULL(resultZ);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(expectedZ, &resultZ[0], 20);   // Z
+}
+
+int main(void)
+{
+    UNITY_BEGIN();//démarrage du moteur de tests
+
+    RUN_TEST(test_verifierChaineValide);
+
+    RUN_TEST(test_conversionChaineABCDE);
+    RUN_TEST(test_conversionChaineFGHIJ);
+    RUN_TEST(test_conversionChaineKLMNO);
+    RUN_TEST(test_conversionChainePQRST);
+    RUN_TEST(test_conversionChaineUVWXY);
+    RUN_TEST(test_conversionChaineZ);
+
+    return UNITY_END();//fermeture du moteur de tests
+}
