@@ -1,8 +1,10 @@
-/*
- * test_morse.c
- *
- *  Created on: 27 avr. 2026
- *      Author: Alice GEDOUX
+/**
+ *******************************************************************************
+ * @file 	test_morse.c
+ * @author 	Alice GEDOUX
+ * @date 	Avr 27, 2026
+ * @brief	Fichier principal pour tester le module "stm32g4_morse.c"
+ *******************************************************************************
  */
 
 #include "unity.h"
@@ -10,24 +12,24 @@
 
 
 /**
- * @brief la fonction peut permettre de réinitialiser des variables globales, allouer de la mémoire, remettre un module dans un état propre
-	préparer un contexte de test. Ici nous n'en avons pas besoin car les variables globales sont déjà réinitialisées dans le fichier morse.c
- * @param rien
- * @retval rien
+ * @brief La fonction peut permettre de réinitialiser des variables globales, allouer de la mémoire, remettre un module dans un état propre
+	préparer un contexte de test. Ici nous n'en avons pas besoin car les variables globales sont déjà réinitialisées dans le fichier morse.c.
+ * @param  Rien.
+ * @retval Rien.
  */
 void setUp(void) {}
 
 /**
- * @brief la fonction peut permettre de libérer de la mémoire, nettoyer des buffers,remettre des flags à zéro
- * @param rien
- * @retval rien
+ * @brief La fonction peut permettre de libérer de la mémoire, nettoyer des buffers,remettre des flags à zéro.
+ * @param  Rien.
+ * @retval Rien.
  */
 void tearDown(void) {}
 
 /**
- * @brief la fonction permet de regrouper tous les tests pour la fonction verifierChaineValide
- * @param rien
- * @retval rien
+ * @brief La fonction permet de regrouper tous les tests pour la fonction verifierChaineValide.
+ * @param  Rien.
+ * @retval Rien.
  */
 void test_verifierChaineValide(void)
 {
@@ -44,9 +46,9 @@ void test_verifierChaineValide(void)
 }
 
 /**
- * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine ABCDE
- * @param rien
- * @retval rien
+ * @brief La fonction permet de tester la fonction conversionChaineMorse pour la chaine ABCDE.
+ * @param  Rien.
+ * @retval Rien.
  */
 void test_conversionChaineABCDE(void)
 {
@@ -58,9 +60,9 @@ void test_conversionChaineABCDE(void)
 }
 
 /**
- * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine FGHIJ
- * @param rien
- * @retval rien
+ * @brief La fonction permet de tester la fonction conversionChaineMorse pour la chaine FGHIJ.
+ * @param  Rien.
+ * @retval Rien.
  */
 void test_conversionChaineFGHIJ(void)
 {
@@ -72,9 +74,9 @@ void test_conversionChaineFGHIJ(void)
 }
 
 /**
- * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine KLMNO
- * @param rien
- * @retval rien
+ * @brief La fonction permet de tester la fonction conversionChaineMorse pour la chaine KLMNO.
+ * @param  Rien.
+ * @retval Rien.
  */
 void test_conversionChaineKLMNO(void)
 {
@@ -86,9 +88,9 @@ void test_conversionChaineKLMNO(void)
 }
 
 /**
- * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine PQRST
- * @param rien
- * @retval rien
+ * @brief La fonction permet de tester la fonction conversionChaineMorse pour la chaine PQRST.
+ * @param  Rien.
+ * @retval Rien.
  */
 void test_conversionChainePQRST(void)
 {
@@ -100,9 +102,9 @@ void test_conversionChainePQRST(void)
 }
 
 /**
- * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine UVWXY
- * @param rien
- * @retval rien
+ * @brief La fonction permet de tester la fonction conversionChaineMorse pour la chaine UVWXY.
+ * @param  Rien.
+ * @retval Rien.
  */
 void test_conversionChaineUVWXY(void)
 {
@@ -115,9 +117,9 @@ void test_conversionChaineUVWXY(void)
 }
 
 /**
- * @brief la fonction permet de tester la fonction conversionChaineMorse pour la chaine Z
- * @param rien
- * @retval rien
+ * @brief La fonction permet de tester la fonction conversionChaineMorse pour la chaine Z.
+ * @param  Rien.
+ * @retval Rien.
  */
 void test_conversionChaineZ(void)
 {
@@ -128,6 +130,11 @@ void test_conversionChaineZ(void)
 	TEST_ASSERT_EQUAL_UINT8_ARRAY(expectedZ, &resultZ[0], 20);   // Z
 }
 
+/**
+ * @brief Fonction principale pour appeler les tests.
+ * @param  Rien.
+ * @retval Rien.
+ */
 int main(void)
 {
     UNITY_BEGIN();//démarrage du moteur de tests

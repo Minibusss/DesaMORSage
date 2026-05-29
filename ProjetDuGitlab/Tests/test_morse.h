@@ -1,8 +1,10 @@
-/*
- * test_morse.h
- *
- *  Created on: 27 avr. 2026
- *      Author: Alice GEDOUX
+/**
+ *******************************************************************************
+ * @file 	test_morse.h
+ * @author 	Alice GEDOUX
+ * @date 	Avr 27, 2026
+ * @brief	Module pour tester le module "stm32g4_morse.c"
+ *******************************************************************************
  */
 
 #ifndef TEST_MORSE_H
