@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <stdint.h> //Fournit des types entiers à taille fixe (uint8_t, int16_t, uint32_t…)->Indispensable en embarqué pour garantir la taille exacte des variables, quel que soit le compilateur ou l’architecture.
 
-#include "../../../ClavierMatriciel/stm32g4_clavier_matriciel.h"
+#include "ClavierMatriciel/stm32g4_clavier_matriciel.h"
 
 #ifdef CONFIG_PULL_UP
 	#define DEFAULT_STATE 		(true)

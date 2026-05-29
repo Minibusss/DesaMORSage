@@ -16,7 +16,6 @@
 #include "stm32g4_gpio.h"
 #include "stm32g4_uart.h"
 #include "stm32g4_utils.h"
-#include "stm32g4_matrix_keyboard.h"//Importation de la librairie pour gérer le clavier matriciel
 #include "../drivers/bsp/MCP23S17/stm32g4_mcp23s17.h"//Importation de la librairie pour initialiser le GPIO Expander
 #include "../drivers/bsp/tft_ili9341/stm32g4_ili9341.h" //Importation de la librairie pour gérer l'affichage de l'écran
 #include "../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h" //Importation de la librairie pour gérer la partie tactile de l'écran
@@ -24,9 +23,12 @@
 #include "../drivers/bsp/HC-05/stm32g4_hc05.h" //Importation de la librairie pour gérer le module Bluetooth
 
 /*Importation des libraries créées pour le projet*/
-#include "../Morse/stm32g4_morse.h"
-#include "../ClavierMatriciel/stm32g4_clavier_matriciel.h"
-#include "../EcranTFT_SPI/stm32g4_ecran_tft_spi.h"
+#include "Morse/stm32g4_morse.h"
+#include "ClavierMatriciel/stm32g4_clavier_matriciel.h"
+#include "EcranTFT_SPI/stm32g4_ecran_tft_spi.h"
+/*Importation des librairies modifiées*/
+#include "MatrixKeyboard/stm32g4_matrix_keyboard.h"//Importation de la librairie pour gérer le clavier matriciel
+
 
 #define BLINK_DELAY		100	//ms
 
@@ -183,7 +185,7 @@ int main(void)
 		            }
 		        }
 
-		        while (receptionActive)
+		        while (receptionActive){
 		        	if(BSP_UART_data_ready(UART1_ID)) {
 						c = BSP_UART_getc(UART1_ID);//Récupère ce qui vient d'être envoyé
 						if (c == '\n' || c == '\r') {//Permet de détécter si l'envoi est fini
@@ -219,6 +221,7 @@ int main(void)
 		    default:
 		        break;
 
-	    }
+		}
 	}
 }
+

@@ -7,8 +7,8 @@
  *******************************************************************************
  */
 #include "stm32g4_ecran_tft_spi.h"
-#include "../drivers/bsp/tft_ili9341/stm32g4_ili9341.h" //Importation de la librairie qui gère l'affichage
-#include "../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h" //Importation de la librarie qui gère le tactile
+#include "../../drivers/bsp/tft_ili9341/stm32g4_ili9341.h" //Importation de la librairie qui gère l'affichage
+#include "../../drivers/bsp/tft_ili9341/stm32g4_xpt2046.h" //Importation de la librarie qui gère le tactile
 
 //Création d'une page de départ
 static Page_e pageCourante = PAGE_ACCUEIL;

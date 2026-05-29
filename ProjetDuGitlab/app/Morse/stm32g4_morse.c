@@ -7,7 +7,7 @@
  *******************************************************************************
  */
 #ifdef TEST
-	#include "../Tests/test_morse.h"
+	#include "Tests/test_morse.h"
 #else
 	#include "stm32g4_morse.h"
 #endif
